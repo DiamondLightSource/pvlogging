@@ -9,9 +9,6 @@
 #include <registryFunction.h>
 
 
-/* Exported so that vxWorks can see it. */
-extern void InstallPvPutHook(const iocshArgBuf *args);
-
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                            IOC PV put logging                             */
@@ -100,16 +97,9 @@ static void EpicsPvPutHook(struct asTrapWriteMessage *pmessage, int after)
         pmessage->userPvt = value;
 }
 
-void InstallPvPutHook(const iocshArgBuf *args)
+static void InstallPvPutHook(const iocshArgBuf *args)
 {
     asTrapWriteRegisterListener(EpicsPvPutHook);
 }
 
-static const iocshFuncDef InstallPvPutHookDef = { "InstallPvPutHook", 0, NULL };
-
-static void RegisterPvPutHook(void)
-{
-    iocshRegister(&InstallPvPutHookDef, InstallPvPutHook);
-}
-
-epicsExportRegistrar(RegisterPvPutHook);
+epicsExportRegistrar(InstallPvPutHook);

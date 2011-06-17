@@ -15,4 +15,3 @@ class PvLogging(Device):
 
     def InitialiseOnce(self):
         print 'asSetFilename %s' % quote_IOC_string(self.access_file)
-        print 'InstallPvPutHook'

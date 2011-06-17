@@ -2,12 +2,15 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <dbAccess.h>       // review
+#include <dbAccess.h>
 #include <iocsh.h>
 #include <asTrapWrite.h>
 #include <epicsExport.h>
 #include <registryFunction.h>
 
+
+/* Exported so that vxWorks can see it. */
+extern void InstallPvPutHook(const iocshArgBuf *args);
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -97,7 +100,7 @@ static void EpicsPvPutHook(struct asTrapWriteMessage *pmessage, int after)
         pmessage->userPvt = value;
 }
 
-static void InstallPvPutHook(const iocshArgBuf *args)
+void InstallPvPutHook(const iocshArgBuf *args)
 {
     asTrapWriteRegisterListener(EpicsPvPutHook);
 }

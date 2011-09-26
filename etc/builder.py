@@ -1,5 +1,7 @@
-from iocbuilder import Device
+from iocbuilder import Device, IocDataStream
 from iocbuilder.iocinit import quote_IOC_string
+from iocbuilder.recordbase import Record
+
 
 class PvLogging(Device):
     LibFileList = ['pvlogging']
@@ -15,3 +17,24 @@ class PvLogging(Device):
 
     def InitialiseOnce(self):
         print 'asSetFilename %s' % quote_IOC_string(self.access_file)
+
+
+class BlacklistFile(Device):
+    Dependencies = (PvLogging,)
+
+    def __init__(self, blacklist):
+        self.__super.__init__()
+        self.blacklist = blacklist
+
+    def Initialise(self):
+        print 'load_logging_blacklist %s' % quote_IOC_string(self.blacklist)
+
+
+class BlacklistPvs(BlacklistFile):
+    def __init__(self):
+        self.__super.__init__(IocDataStream('auto_blacklist'))
+        self.blacklist.write(' Automatically generated, do not edit\n')
+        Record.AddMetadataHook(lambda _: None, Blacklist = self.add_blacklist)
+
+    def add_blacklist(self, record):
+        self.blacklist.write('%s\n' % record.name)

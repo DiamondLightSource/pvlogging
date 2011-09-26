@@ -3,7 +3,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define db_accessHFORdb_accessC     // Needed to get correct DBF_ values
 #include <dbAccess.h>
+#include <dbFldTypes.h>
 #include <iocsh.h>
 #include <asTrapWrite.h>
 #include <gpHash.h>
@@ -40,7 +42,7 @@ static struct formatted * FormatValue(struct dbAddr *dbaddr)
             dbaddr->no_elements * sizeof(epicsOldString));
 
     /* Start by using dbGetField() to format everything.  This will also update
-     * the length. */
+     * the length, which is why we do this first. */
     formatted->length = dbaddr->no_elements;
     dbGetField(
         dbaddr, DBR_STRING, formatted->values, NULL, &formatted->length, NULL);
@@ -55,12 +57,12 @@ static struct formatted * FormatValue(struct dbAddr *dbaddr)
             sprintf(formatted->values[i], format, raw[i]); \
     } while (0)
 
-    switch (dbaddr->dbr_field_type)
+    switch (dbaddr->field_type)
     {
-        case 2:     // Should be DBR_FLOAT, but broken!
+        case DBF_FLOAT:
             FORMAT(epicsFloat32, "%.7g");
             break;
-        case 6:     // Should be DBR_DOUBLE
+        case DBF_DOUBLE:
             FORMAT(epicsFloat64, "%.15g");
             break;
     }

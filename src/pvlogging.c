@@ -35,7 +35,7 @@ struct formatted
     epicsOldString values[0];
 };
 
-static struct formatted * FormatValue(struct dbAddr *dbaddr)
+static struct formatted *FormatValue(struct dbAddr *dbaddr)
 {
     struct formatted *formatted =
         malloc(sizeof(struct formatted) +
@@ -54,7 +54,8 @@ static struct formatted * FormatValue(struct dbAddr *dbaddr)
         type *raw = (type *) dbaddr->pfield; \
         int i; \
         for (i = 0; i < formatted->length; i ++) \
-            sprintf(formatted->values[i], format, raw[i]); \
+            snprintf(formatted->values[i], sizeof(epicsOldString), \
+                format, raw[i]); \
     } while (0)
 
     switch (dbaddr->field_type)

@@ -54,8 +54,7 @@ static struct formatted *FormatValue(struct dbAddr *dbaddr)
         type *raw = (type *) dbaddr->pfield; \
         int i; \
         for (i = 0; i < formatted->length; i ++) \
-            snprintf(formatted->values[i], sizeof(epicsOldString), \
-                format, raw[i]); \
+            sprintf(formatted->values[i], format, raw[i]); \
     } while (0)
 
     switch (dbaddr->field_type)

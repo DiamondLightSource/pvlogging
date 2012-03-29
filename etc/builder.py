@@ -1,7 +1,7 @@
 from iocbuilder import Device, IocDataStream
 from iocbuilder.iocinit import quote_IOC_string
 from iocbuilder.recordbase import Record
-
+from iocbuilder.arginfo import *
 
 class PvLogging(Device):
     LibFileList = ['pvlogging']
@@ -18,6 +18,8 @@ class PvLogging(Device):
     def InitialiseOnce(self):
         print 'asSetFilename %s' % quote_IOC_string(self.access_file)
 
+    ArgInfo = makeArgInfo(__init__,
+        access_file = Simple("Name of access control file"))
 
 class BlacklistFile(Device):
     Dependencies = (PvLogging,)
@@ -29,7 +31,6 @@ class BlacklistFile(Device):
     def Initialise(self):
         print 'load_logging_blacklist %s' % quote_IOC_string(self.blacklist)
 
-
 class BlacklistPvs(BlacklistFile):
     def __init__(self):
         self.__super.__init__(IocDataStream('auto_blacklist'))
@@ -38,3 +39,13 @@ class BlacklistPvs(BlacklistFile):
 
     def add_blacklist(self, record):
         self.blacklist.write('%s\n' % record.name)
+
+#    ArgInfo = makeArginfo(__init__)
+
+#class BlacklistPv(Device):
+#    def __init__(self, blacklistPvs, record):
+#        self.__super.__init__()        
+#        self.blacklistPvs.add_blacklist(record)
+        
+        
+    

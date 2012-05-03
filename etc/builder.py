@@ -1,4 +1,4 @@
-from iocbuilder import Device, IocDataStream
+from iocbuilder import ModuleBase, Device, IocDataStream
 from iocbuilder.iocinit import quote_IOC_string
 from iocbuilder.recordbase import Record
 from iocbuilder.arginfo import *
@@ -32,20 +32,32 @@ class BlacklistFile(Device):
         print 'load_logging_blacklist %s' % quote_IOC_string(self.blacklist)
 
 class BlacklistPvs(BlacklistFile):
+    AutoInstantiate = True      # Allow BlacklistPv to instantiate this
+
+    Instance = None
+
     def __init__(self):
         self.__super.__init__(IocDataStream('auto_blacklist'))
         self.blacklist.write(' Automatically generated, do not edit\n')
         Record.AddMetadataHook(lambda _: None, Blacklist = self.add_blacklist)
+        assert self.Instance is None, 'Cannot have multiple instances'
+        BlacklistPvs.Instance = self
 
     def add_blacklist(self, record):
-        self.blacklist.write('%s\n' % record.name)
+        self.blacklist_pv(record.name)
 
-#    ArgInfo = makeArginfo(__init__)
+    @classmethod
+    def blacklist_pv(cls, name):
+        cls.Instance.blacklist.write('%s\n' % name)
 
-#class BlacklistPv(Device):
-#    def __init__(self, blacklistPvs, record):
-#        self.__super.__init__()        
-#        self.blacklistPvs.add_blacklist(record)
-        
-        
-    
+
+class BlacklistPv(ModuleBase):
+    '''Adds a single PV to the list of blacklisted PVs.'''
+
+    Dependencies = (BlacklistPvs,)
+
+    def __init__(self, name):
+        BlacklistPvs.blacklist_pv(name)
+
+    ArgInfo = makeArgInfo(__init__,
+        name = Simple('PV to blacklist from PV logging'))

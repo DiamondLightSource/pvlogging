@@ -1,3 +1,38 @@
 Release 1-3
 Add windows-x64 and win32-x86 architectures to the existing
 vxWorks-ppc604_long and linux-x86_64
+
+On win32-x86 and windows-x64, the DLS windows build of EPICS has a
+buffered stream. One does not see any messages on the console until 256 characters make it to the buffer.
+
+Here is the patch applied to EPICS R3.14.12.3 around February 2014
+
+Index: src/libCom/iocsh/iocsh.cpp
+===================================================================
+--- src/libCom/iocsh/iocsh.cpp	(revision 163)
++++ src/libCom/iocsh/iocsh.cpp	(working copy)
+@@ -798,6 +798,24 @@
+ int epicsShareAPI
+ iocsh (const char *pathname)
+ {
++#ifdef _WIN32
++// Adjust stdout and stderr buffering for use with non-terminal programs such as procServ
++    static int first_call = 1;
++	if (first_call)
++	{
++		if (setvbuf(stderr, NULL, _IONBF, BUFSIZ) != 0)
++		{
++		    fprintf(stderr, "iocsh: error setting stderr buffering\n");
++			fflush(stderr);
++		}
++		if (setvbuf(stdout, NULL, _IOFBF, 256) != 0) // set a small buffer size to try and emulate line buffering (Windows does not support _IOLBF)
++		{
++		    fprintf(stderr, "iocsh: error setting stdout buffering\n");
++			fflush(stderr);
++		}
++		first_call = 0;
++	}
++#endif /* _WIN32 */
+     if (pathname)
+         epicsEnvSet("IOCSH_STARTUP_SCRIPT", pathname);
+     return iocshBody(pathname, NULL);

@@ -4,7 +4,7 @@ from pkg_resources import require
 require('iocbuilder')
 
 import iocbuilder
-iocbuilder.ConfigureIOC(architecture = 'linux-x86')
+iocbuilder.ConfigureIOC(architecture = 'linux-x86_64')
 from iocbuilder import ModuleVersion, records, WriteNamedIoc
 
 TOP = os.path.realpath(os.path.join(os.path.dirname(__file__), '../..'))

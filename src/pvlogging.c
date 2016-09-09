@@ -1,4 +1,12 @@
+#ifdef _WIN32
+/* No stdbool on Windows. */
+typedef int bool;
+#define false 0
+#define true 1
+#else
 #include <stdbool.h>
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -187,13 +195,16 @@ static void Initialise(void)
 /*                       Registration and Shell Interface                    */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+static const iocshArg blacklistArg0 = { "blacklist", iocshArgString };
+static const iocshArg *const blacklistArgs[] = { &blacklistArg0 };
 static iocshFuncDef load_logging_blacklist_def = {
-    "load_logging_blacklist", 1, (const iocshArg *[]) {
-        &(const iocshArg) { "blacklist", iocshArgString } }
+    "load_logging_blacklist", 1, blacklistArgs
 };
+
+static const iocshArg enableArg0 = { "enabled", iocshArgInt };
+static const iocshArg *const enableArgs[] = { &enableArg0 };
 static iocshFuncDef set_logging_enable_def = {
-    "set_logging_enable", 1, (const iocshArg *[]) {
-        &(const iocshArg) { "enabled", iocshArgInt } }
+    "set_logging_enable", 1, enableArgs
 };
 
 static void call_load_logging_blacklist(const iocshArgBuf *args)

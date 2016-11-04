@@ -3,10 +3,10 @@ include $(TOP)/configure/CONFIG
 
 # Windows architectures are: win32-x86 and windows-x64
 
+USR_CFLAGS += -Wall
 ifneq ($(EPICS_HOST_ARCH),win32-x86)
 ifneq ($(EPICS_HOST_ARCH),windows-x64)
 USR_CFLAGS += -Werror
-USR_CFLAGS += -Wall
 USR_CFLAGS += -Wbad-function-cast
 USR_CFLAGS += -Wmissing-noreturn
 USR_CFLAGS += -Wcast-qual

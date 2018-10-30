@@ -20,6 +20,15 @@ typedef int bool;
 #include <epicsString.h>
 #include <epicsExport.h>
 #include <registryFunction.h>
+#include <epicsVersion.h>
+
+/* The interface to the caput event callback has changed as of EPICS 3.15, and
+ * we need to compile as appropriate. */
+#define BASE_3_15 (EPICS_VERSION * 100 + EPICS_REVISION >= 315)
+#if BASE_3_15
+#include <dbChannel.h>
+#endif
+
 
 
 /* This function can be called to load a list of PVs to blacklist. */
@@ -115,7 +124,12 @@ static void EpicsPvPutHook(struct asTrapWriteMessage *pmessage, int after)
 {
     if (logging_enabled  &&  !CheckBlacklist(pmessage, after))
     {
-        struct dbAddr *dbaddr = pmessage->serverSpecific;
+#if BASE_3_15
+        struct dbChannel *pchan = pmessage->serverSpecific;
+        dbAddr *dbaddr = &pchan->addr;
+#else
+        dbAddr *dbaddr = pmessage->serverSpecific;
+#endif
         struct formatted *value = FormatValue(dbaddr);
 
         if (after)

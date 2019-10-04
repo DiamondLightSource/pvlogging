@@ -1,10 +1,7 @@
 *~
 O.*
-bin
-dbd
-db
-data
-lib
-.svn*
+/dbd
+/data
+/lib
 /ioc
 .idea

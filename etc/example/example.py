@@ -13,12 +13,13 @@ ModuleVersion('pvlogging', home = TOP, use_name = False)
 
 from iocbuilder.modules import pvlogging
 
-pvlogging.PvLogging()
+pvlogging.PvLogging(max_length = 10)
 pvlogging.BlacklistPvs()
 
 # A simple PV to test with
 iocbuilder.SetDevice('TEST', 1, 'TS', 'XX')
 records.ao('TEST')
 records.ao('TEST2').Blacklist()
+records.waveform('TESTWF', FTVL = 'FLOAT', NELM = 100)
 
 WriteNamedIoc(os.path.join(TOP, 'ioc'), 'TS-XX-IOC-99')

@@ -6,5 +6,5 @@ db
 data
 lib
 .svn*
-iocs/*IOC*
+/ioc
 .idea

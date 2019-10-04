@@ -8,18 +8,22 @@ class PvLogging(Device):
     DbdFileList = ['pvlogging']
     AutoInstantiate = True
 
-    def __init__(self, access_file = None):
+    def __init__(self, access_file = None, max_length = None):
         self.__super.__init__()
         if access_file is None:
             self.access_file = self.ModuleFile('data/access.acf')
         else:
             self.access_file = access_file
+        self.max_length = max_length
 
     def InitialiseOnce(self):
         print 'asSetFilename %s' % quote_IOC_string(self.access_file)
+        if self.max_length:
+            print 'set_max_array_length %d' % self.max_length
 
     ArgInfo = makeArgInfo(__init__,
-        access_file = Simple("Name of access control file"))
+        access_file = Simple("Name of access control file"),
+        max_length = Simple('Maximum logging length', int))
 
 class BlacklistFile(Device):
     Dependencies = (PvLogging,)

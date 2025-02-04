@@ -3,3 +3,5 @@
 # top directory each time this file is changed.
 
 EPICS_BASE=/dls_sw/epics/R3.14.12.7/base
+
+-include $(TOP)/configure/RELEASE.local

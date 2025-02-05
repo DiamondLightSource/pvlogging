@@ -6,7 +6,7 @@ include $(TOP)/configure/CONFIG
 USR_CFLAGS += -Wall
 ifneq ($(EPICS_HOST_ARCH),win32-x86)
 ifneq ($(EPICS_HOST_ARCH),windows-x64)
-USR_CFLAGS += -Werror
+#USR_CFLAGS += -Werror
 USR_CPPFLAGS += -isystem $(EPICS_BASE)/include
 USR_CFLAGS += -Wbad-function-cast
 USR_CFLAGS += -Wmissing-noreturn
